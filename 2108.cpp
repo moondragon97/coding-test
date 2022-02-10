@@ -5,6 +5,7 @@
 using namespace std;
 
 int main(){
+    int a;
     int num;
     scanf("%d", &num);
     int arr[num];
