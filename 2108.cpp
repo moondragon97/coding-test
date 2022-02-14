@@ -4,64 +4,64 @@
 #include <queue>
 using namespace std;
 
+int input[500001];
+
+void swap(int *a, int *b){
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void quickSort(int start, int end){
+    if(start > end) return;
+    int pivot = start;
+    int i = start+1;
+    int j = end;
+    while(i <= j){
+        while(i <= end && input[i] <= input[pivot]) i++;
+        while(j > start && input[j] >= input[pivot]) j--;
+        if(i <= j) swap(&input[i], &input[j]);
+        else swap(&input[pivot], &input[j]);
+    }
+
+    quickSort(start, j-1);
+    quickSort(j+1, end);
+}
+
 int main(){
-    int a;
     int num;
     scanf("%d", &num);
-    int arr[num];
-    int index[8001] = {0, };
-    for(int i=0; i<num; i++){
-        scanf("%d", &arr[i]);
-        index[arr[i]+4000]++;
-    }
+    int many[8001] = {0, };
     double sum;
-    int max=-4001, min=4001, temp;
     for(int i=0; i<num; i++){
-        sum += arr[i];
-        if(max < arr[i]) max = arr[i];
-        if(min > arr[i]) min = arr[i];
-
-        for(int j=i; j>0; j--){
-            if(arr[j] >= arr[j-1]) continue;
-            temp = arr[j];
-            arr[j] = arr[j-1];
-            arr[j-1] = temp;
-        }
+        scanf("%d", &input[i]);
+        many[input[i]+4000]++;
+        sum += input[i];
     }
 
-    int manyIndex = 0, maxSeq=1;
+    quickSort(0, num-1);
+    
     queue<int> manyQueue;
-    for(int i=1; i<num; i++){
-        if(arr[i] == arr[i-1]){ 
-            manyIndex++;
-            if(maxSeq == manyIndex){
-                manyQueue.push(arr[i]);
-            }else if(maxSeq < manyIndex){
-                manyQueue = queue<int>();
-                manyQueue.push(arr[i]);
-                maxSeq = manyIndex;
-            }
-        }else{ 
-            manyIndex = 0;
+    int max = 0;
+    for(int i=0; i<8001; i++){
+        if(many[i] == 0) continue;
+        if(many[i] > max){
+            max = many[i];
+            manyQueue = queue<int>();
+            manyQueue.push(i-4000);
+        }else if(many[i] == max){
+            manyQueue.push(i-4000);
         }
     }
-    
-    
-    int many=0;
-    if(manyQueue.size() > 2){
+    int valueMany=0;
+    if(manyQueue.size() == 1)
+        valueMany = manyQueue.front();
+    else if(manyQueue.size() > 1){
         manyQueue.pop();
-        many = manyQueue.front();
-    }else if(manyQueue.size() == 0){
-        many = arr[1];
-        if(num < 2)
-            many = arr[0];
+        valueMany = manyQueue.front();
     }
-    else if(manyQueue.size() == 1)
-        many = manyQueue.front();
+    int middle = num == 1 ? input[0] : input[num/2];
+    printf("%d \n%d \n%d \n%d", (int)round(sum/num), middle, valueMany, input[num-1]-input[0]);
 
-    printf("%f \n", round(sum/num));
-    printf("%d \n", arr[num/2]);
-    printf("%d \n", many);
-    printf("%d \n", max-min);
     return 0;
 }
