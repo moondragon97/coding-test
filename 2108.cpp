@@ -4,32 +4,37 @@
 #include <queue>
 using namespace std;
 
-int input[500001];
+int input[500001], sorts[500001];
+int num;
 
-void swap(int *a, int *b){
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
+void merge(int m, int middle, int n){
+    int a = m, b = middle + 1, c = m;
 
-void quickSort(int start, int end){
-    if(start > end) return;
-    int pivot = start;
-    int i = start+1;
-    int j = end;
-    while(i <= j){
-        while(i <= end && input[i] <= input[pivot]) i++;
-        while(j > start && input[j] >= input[pivot]) j--;
-        if(i <= j) swap(&input[i], &input[j]);
-        else swap(&input[pivot], &input[j]);
+    while(a <= middle && b <= n){
+        if(input[a] <= input[b]) sorts[c++] = input[a++];
+        else sorts[c++] = input[b++];
+    }
+    if(a <= middle){
+        for(int i=a; i<=middle; i++) sorts[c++] = input[i];
+    }else{
+        for(int i=b; i<=n; i++) sorts[c++] = input[i];
     }
 
-    quickSort(start, j-1);
-    quickSort(j+1, end);
+    for(int i=m; i<=n; i++){
+        input[i] = sorts[i];
+    }
+}
+
+void mergeSort(int m, int n){
+    if(m < n){
+        int middle = (m + n) / 2;
+        mergeSort(m, middle);
+        mergeSort(middle + 1, n);
+        merge(m, middle, n);
+    }
 }
 
 int main(){
-    int num;
     scanf("%d", &num);
     int many[8001] = {0, };
     double sum;
@@ -39,7 +44,7 @@ int main(){
         sum += input[i];
     }
 
-    quickSort(0, num-1);
+    mergeSort(0, num-1);
     
     queue<int> manyQueue;
     int max = 0;
