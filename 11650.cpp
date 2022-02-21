@@ -10,15 +10,15 @@ int main(){
         scanf("%d %d", &x[i], &y[i]);
     }
 
-    for(int i=1; i<n-1; i++){
+    for(int i=1; i<n; i++){
         for(int j=i; j>0; j--){
-            if(x[i] < x[i-1]){
-                int temp = x[i];
-                x[i] = x[i-1];
-                x[i-1] = temp;
-                temp = y[i];
-                y[i] = y[i-1];
-                y[i-1] = temp;
+            if(x[j] < x[j-1]){
+                int temp = x[j];
+                x[j] = x[j-1];
+                x[j-1] = temp;
+                temp = y[j];
+                y[j] = y[j-1];
+                y[j-1] = temp;
             }else break;
         }
     }
@@ -27,15 +27,15 @@ int main(){
     int seq = 0;
 
     for(int i=0; i<n; i++){
-        if(x[i] == x[i+1]){
+        if(i + 1 != n && x[i] == x[i+1]){
             if(i != start){
                 start = i;
             }
             seq++;
         }else{
             if(seq > 0){
-                for(int j=start; j < start+seq; j++){
-                    for(int k=j+1; k>start; j--){
+                for(int j=start+1; j <= start+seq; j++){
+                    for(int k=j; k>start; k--){
                         if(y[k] < y[k-1]){
                             int temp = y[k];
                             y[k] = y[k-1];
@@ -43,7 +43,6 @@ int main(){
                         }else break;
                     }
                 }
-
                 start = -100001;
                 seq = 0;
             }
