@@ -1,54 +1,69 @@
 #include <iostream>
-#include <string>
-using namespace std;
+#include <stdlib.h>
+
+class point{
+public:
+    int x;
+    int y;
+};
+
+point points[100001];
+
+void merge(point* arr, int first, int middle, int last){
+    int i = first;
+    int j = middle + 1;
+    int v = first;
+
+    while(i <= middle && j <= last){
+        if(arr[i].x > arr[j].x){
+            points[v++] = arr[j++];
+        }else if(arr[i].x < arr[j].x){
+            points[v++] = arr[i++];
+        }
+        else{
+            if(arr[i].y > arr[j].y){
+                points[v++] = arr[j++];
+            }else if(arr[i].y < arr[j].y){
+                points[v++] = arr[i++];
+            }
+        }
+    }
+
+    if(i > middle)
+        for(int k = j; k <= last; k++){
+            points[v++] = arr[k];
+        }
+    else
+        for(int k = i; k <= middle; k++){
+            points[v++] = arr[k];
+        }
+
+    for(int k=first; k<=last; k++){
+        arr[k] = points[k];
+    }    
+}
+
+void mergeSort(point* arr, int first, int last){
+    if(first < last){
+        int middle = (first + last)/2;
+        mergeSort(arr, first, middle);
+        mergeSort(arr, middle+1, last);
+        merge(arr, first, middle, last); 
+    }
+}
 
 int main(){
     int n;
     scanf("%d", &n);
-    int x[n], y[n];
+    point* arr = (point*)malloc(sizeof(point)*n);
     for(int i=0; i<n; i++){
-        scanf("%d %d", &x[i], &y[i]);
+        scanf("%d %d", &arr[i].x, &arr[i].y);
     }
 
-    for(int i=1; i<n; i++){
-        for(int j=i; j>0; j--){
-            if(x[j] < x[j-1]){
-                int temp = x[j];
-                x[j] = x[j-1];
-                x[j-1] = temp;
-                temp = y[j];
-                y[j] = y[j-1];
-                y[j-1] = temp;
-            }else break;
-        }
-    }
-
-    int start = -100001;
-    int seq = 0;
+    mergeSort(arr, 0, n-1);
 
     for(int i=0; i<n; i++){
-        if(i + 1 != n && x[i] == x[i+1]){
-            if(i != start){
-                start = i;
-            }
-            seq++;
-        }else{
-            if(seq > 0){
-                for(int j=start+1; j <= start+seq; j++){
-                    for(int k=j; k>start; k--){
-                        if(y[k] < y[k-1]){
-                            int temp = y[k];
-                            y[k] = y[k-1];
-                            y[k-1] = temp;
-                        }else break;
-                    }
-                }
-                start = -100001;
-                seq = 0;
-            }
-        }
+        printf("%d %d \n", arr[i].x, arr[i].y);
     }
-    for(int i=0; i<n; i++){
-        printf("%d %d\n", x[i], y[i]);
-    }
+    return 0;
 }
